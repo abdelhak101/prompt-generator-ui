@@ -4,6 +4,8 @@ Universal Design Prompt Generator (Ultimate Edition) — a single-file, offline 
 
 Open the app: [prompt-generator.html](/prompt-generator.html)
 
+View online: https://abdelhak101.github.io/prompt-generator-ui/prompt-generator.html
+
 ## Overview
 
 This UI helps you capture design intent across context, visual direction, layout, design system, UX strategy, technical handoff, and marketing assets. It produces prompt output in three formats:
