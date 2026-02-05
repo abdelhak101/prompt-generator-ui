@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Design Prompt Generator (Ultimate Edition)</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --section-bg: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --border: #475569;
+            --success: #10b981;
+        }
+
+        .examples {
+            margin-top: 8px;
+            font-size: 0.85em;
+        }
+
+        .examples a {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .examples a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        .example-images {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .example-image {
+            width: 60px;
+            height: 40px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .example-image:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .example-image.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar / Form Area */
+        .sidebar {
+            width: 500px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+
+        .sidebar-content {
+            overflow-y: auto;
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            margin: 1.5rem 0 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            margin: 1rem 0 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .helper-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.6rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .checkbox-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--accent);
+        }
+
+        /* Accordion */
+        .accordion-item {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background-color: var(--section-bg);
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .accordion-header:hover {
+            background-color: var(--border);
+        }
+
+        .accordion-content {
+            padding: 1rem;
+            display: none;
+            background-color: var(--card-bg);
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+
+        .accordion-item.active .accordion-header {
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Main Preview Area */
+        .main-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--section-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border);
+        }
+
+        .output-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            white-space: pre-wrap;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            overflow-x: auto;
+            flex: 1;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        /* Header Controls */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .format-toggle {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--section-bg);
+        }
+        .counts {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-left: 8px;
+        }
+        .accordion-header {
+            background-color: var(--section-bg);
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            width: 100%;
+            border: none;
+            color: var(--text-primary);
+            text-align: left;
+        }
+        .accordion-header:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+        }
+        .btn:focus, .btn-secondary:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+        }
+        /* Light theme */
+        :root[data-theme="light"] {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --section-bg: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #cbd5e1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Universal Design Prompt</h1>
+            <p class="helper-text">Comprehensive Generator (v2.0)</p>
+            
+        </div>
+
+        <div class="sidebar-content">
+            <form id="promptForm">
+
+                <!-- Section 1: Core Context -->
+                <div class="accordion-item active">
+                <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="true">1. Core Context (Who & Why)
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Role</label>
+                            <input type="text" id="role" placeholder="e.g. Senior Product Designer"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples: <a href="#"
+                                        onclick="setValue('role', 'Senior Product Designer')">Senior Product
+                                        Designer</a> •
+                                    <a href="#" onclick="setValue('role', 'Visual Designer')">Visual Designer</a> •
+                                    <a href="#" onclick="setValue('role', 'UX/UI Designer')">UX/UI Designer</a> •
+                                    <a href="#" onclick="setValue('role', 'Brand Designer')">Brand Designer</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Project Type</label>
+                            <input type="text" id="type" placeholder="e.g. SaaS Landing Page" oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples: <a href="#" onclick="setValue('type', 'SaaS Landing Page')">SaaS
+                                        Landing Page</a> •
+                                    <a href="#" onclick="setValue('type', 'Crypto Trading Dashboard')">Crypto
+                                        Trading Dashboard</a> •
+                                    <a href="#" onclick="setValue('type', 'Portfolio Website')">Portfolio
+                                        Website</a> •
+                                    <a href="#" onclick="setValue('type', 'E-commerce Store')">E-commerce
+                                        Store</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Primary Goal</label>
+                            <textarea id="goal" placeholder="e.g. Convert visitors to trial users"
+                                oninput="updatePrompt()"></textarea>
+                            <div class="examples">
+                                <small>Examples: <a href="#"
+                                        onclick="setValue('goal', 'Convert visitors to trial users')">Convert
+                                        visitors to trial users</a> •
+                                    <a href="#" onclick="setValue('goal', 'Show real-time data with premium feel')">Show
+                                        real-time data with premium feel</a> •
+                                    <a href="#"
+                                        onclick="setValue('goal', 'Showcase creative work professionally')">Showcase
+                                        creative work professionally</a> •
+                                    <a href="#" onclick="setValue('goal', 'Drive product sales effectively')">Drive
+                                        product sales effectively</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Target Audience</label>
+                            <textarea id="audience" placeholder="e.g. Tech-savvy founders"
+                                oninput="updatePrompt()"></textarea>
+                            <div class="examples">
+                                <small>Examples: <a href="#"
+                                        onclick="setValue('audience', 'Tech-savvy founders')">Tech-savvy
+                                        founders</a> •
+                                    <a href="#" onclick="setValue('audience', 'Pro Traders')">Pro Traders</a> •
+                                    <a href="#" onclick="setValue('audience', 'Creative professionals')">Creative
+                                        professionals</a> •
+                                    <a href="#"
+                                        onclick="setValue('audience', 'Fashion-conscious consumers')">Fashion-conscious
+                                        consumers</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Key User Decision</label>
+                            <input type="text" id="decision" placeholder="e.g. Is this trustworthy?"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples: <a href="#" onclick="setValue('decision', 'Is this trustworthy?')">Is
+                                        this
+                                        trustworthy?</a> •
+                                    <a href="#" onclick="setValue('decision', 'Can I make money here?')">Can I make
+                                        money here?</a> •
+                                    <a href="#" onclick="setValue('decision', 'Is this person skilled?')">Is this
+                                        person skilled?</a> •
+                                    <a href="#" onclick="setValue('decision', 'Is this worth the price?')">Is this
+                                        worth the price?</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>AI Tool for Generation</label>
+                            <select id="aiTool" onchange="updatePrompt()">
+                                <option value="">Select AI Tool...</option>
+                                <option value="Figma">Figma (Design Tool)</option>
+                                <option value="Banana">Banana (AI Development)</option>
+                                <option value="v0">v0 (Vercel's AI)</option>
+                                <option value="Claude">Claude (Anthropic)</option>
+                                <option value="ChatGPT">ChatGPT (OpenAI)</option>
+                                <option value="Gemini">Gemini (Google)</option>
+                                <option value="Midjourney">Midjourney (Image Generation)</option>
+                                <option value="DALL-E">DALL-E (OpenAI Images)</option>
+                                <option value="Stable Diffusion">Stable Diffusion (Open Source)</option>
+                                <option value="Runway">Runway (Video AI)</option>
+                                <option value="Notion AI">Notion AI (Workspace)</option>
+                                <option value="GitHub Copilot">GitHub Copilot (Code)</option>
+                                <option value="Any AI Tool">Any AI Tool (Generic)</option>
+                            </select>
+                            <div class="examples">
+                                <small>Choose the AI tool you'll use to generate the design. This will tailor the prompt format.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Visual DNA -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">2. Visual DNA (Attributes)
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Visual Mood (Emotional Tone)</label>
+                            <input type="text" id="mood" placeholder="e.g. Professional, Trustworthy, Modern"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples: <a href="#"
+                                        onclick="setValue('mood', 'Professional, Trustworthy, Modern')">Professional,
+                                        Trustworthy, Modern</a> •
+                                    <a href="#" onclick="setValue('mood', 'Dark, Neon, High-Tech')">Dark, Neon,
+                                        High-Tech</a> •
+                                    <a href="#" onclick="setValue('mood', 'Creative, Bold, Artistic')">Creative,
+                                        Bold, Artistic</a> •
+                                    <a href="#" onclick="setValue('mood', 'Luxury, Premium, Exclusive')">Luxury,
+                                        Premium, Exclusive</a></small>
+                            </div>
+                            <div class="example-images">
+                                <div class="example-image" style="background: linear-gradient(45deg, #1e40af, #3b82f6);"
+                                    title="Professional"
+                                    onclick="setValue('mood', 'Professional, Trustworthy, Modern')"></div>
+                                <div class="example-image" style="background: linear-gradient(45deg, #0f172a, #8b5cf6);"
+                                    title="Dark Tech" onclick="setValue('mood', 'Dark, Neon, High-Tech')"></div>
+                                <div class="example-image" style="background: linear-gradient(45deg, #dc2626, #f59e0b);"
+                                    title="Creative" onclick="setValue('mood', 'Creative, Bold, Artistic')"></div>
+                                <div class="example-image" style="background: linear-gradient(45deg, #1f2937, #d4af37);"
+                                    title="Luxury" onclick="setValue('mood', 'Luxury, Premium, Exclusive')"></div>
+                            </div>
+                        </div>
+
+                        <h3>Style Spectrum</h3>
+                        <div class="form-group">
+                            <label>Maturity</label>
+                            <select id="maturity" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Mature - Professional, established">Mature</option>
+                                <option value="Youthful - Energetic, vibrant">Youthful</option>
+                                <option value="Balanced - Mix of both">Balanced</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples: <a href="#"
+                                        onclick="setValue('maturity', 'Mature - Professional, established')">Mature</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('maturity', 'Youthful - Energetic, vibrant')">Youthful</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('maturity', 'Balanced - Mix of both')">Balanced</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Aesthetic Approach</label>
+                            <select id="aesthetic" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Modern - Contemporary">Modern</option>
+                                <option value="Minimalist - Ultra-clean">Minimalist</option>
+                                <option value="Classic - Timeless">Classic</option>
+                                <option value="Maximalist - Rich, detailed">Maximalist</option>
+                                <option value="Futuristic - Forward-looking">Futuristic</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('aesthetic', 'Modern - Contemporary')">Modern</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('aesthetic', 'Minimalist - Ultra-clean')">Minimalist</a> •
+                                    <a href="#" onclick="setValue('aesthetic', 'Classic - Timeless')">Classic</a> •
+                                    <a href="#"
+                                        onclick="setValue('aesthetic', 'Futuristic - Forward-looking')">Futuristic</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Complexity Level</label>
+                            <select id="complexity" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Simple - Clean, straightforward">Simple</option>
+                                <option value="Sophisticated - Layered, nuanced">Sophisticated</option>
+                                <option value="Complex - Intricate, detailed">Complex</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('complexity', 'Simple - Clean, straightforward')">Simple</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('complexity', 'Sophisticated - Layered, nuanced')">Sophisticated</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('complexity', 'Complex - Intricate, detailed')">Complex</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Visual Representation</label>
+                            <select id="representation" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Abstract - Conceptual, metaphorical">Abstract</option>
+                                <option value="Literal - Direct, realistic">Literal</option>
+                                <option value="Semi-Abstract - Mix of both">Semi-Abstract</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('representation', 'Abstract - Conceptual, metaphorical')">Abstract</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('representation', 'Literal - Direct, realistic')">Literal</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('representation', 'Semi-Abstract - Mix of both')">Semi-Abstract</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Form Language</label>
+                            <select id="formLanguage" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Geometric - Angular, structured">Geometric</option>
+                                <option value="Organic - Flowing, natural">Organic</option>
+                                <option value="Hybrid - Combination">Hybrid</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('formLanguage', 'Geometric - Angular, structured')">Geometric</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('formLanguage', 'Organic - Flowing, natural')">Organic</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('formLanguage', 'Hybrid - Combination')">Hybrid</a></small>
+                            </div>
+                        </div>
+
+                        <h3>Advanced Style Attributes</h3>
+                        <div class="form-group">
+                            <label>Gender Association</label>
+                            <select id="gender" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Masculine - Bold, angular, strong">Masculine</option>
+                                <option value="Feminine - Soft, curved, elegant">Feminine</option>
+                                <option value="Neutral/Unisex - Universal appeal">Neutral/Unisex</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('gender', 'Masculine - Bold, angular, strong')">Masculine</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('gender', 'Feminine - Soft, curved, elegant')">Feminine</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('gender', 'Neutral/Unisex - Universal appeal')">Neutral/Unisex</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Value Perception</label>
+                            <select id="valuePerception" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Luxurious - Premium, high-end">Luxurious</option>
+                                <option value="Economical - Affordable, accessible">Economical</option>
+                                <option value="Mid-range - Quality without extravagance">Mid-range</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('valuePerception', 'Luxurious - Premium, high-end')">Luxurious</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('valuePerception', 'Economical - Affordable, accessible')">Economical</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('valuePerception', 'Mid-range - Quality without extravagance')">Mid-range</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Emotional Tone</label>
+                            <select id="emotionalTone" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Playful - Fun, whimsical, lighthearted">Playful</option>
+                                <option value="Serious - Professional, authoritative">Serious</option>
+                                <option value="Approachable Serious - Professional but friendly">Approachable
+                                    Serious</option>
+                                <option value="Dramatic - Bold, intense, theatrical">Dramatic</option>
+                                <option value="Calm - Peaceful, serene, relaxed">Calm</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('emotionalTone', 'Playful - Fun, whimsical, lighthearted')">Playful</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('emotionalTone', 'Serious - Professional, authoritative')">Serious</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('emotionalTone', 'Calm - Peaceful, serene, relaxed')">Calm</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Energy Level</label>
+                            <select id="energyLevel" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Dynamic - Active, moving, energetic">Dynamic</option>
+                                <option value="Static - Stable, grounded, still">Static</option>
+                                <option value="Explosive - High energy, impactful">Explosive</option>
+                                <option value="Subdued - Low energy, gentle">Subdued</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('energyLevel', 'Dynamic - Active, moving, energetic')">Dynamic</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('energyLevel', 'Static - Stable, grounded, still')">Static</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('energyLevel', 'Explosive - High energy, impactful')">Explosive</a></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Design Techniques -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">3. Design Techniques
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <h3>Visual Style Movement</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Glassmorphism"
+                                    onchange="updatePrompt()"> Glassmorphism</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Dark Mode"
+                                    onchange="updatePrompt()"> Dark Mode</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Flat Design"
+                                    onchange="updatePrompt()"> Flat Design</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Bento Grids"
+                                    onchange="updatePrompt()"> Bento Grids</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Swiss Style"
+                                    onchange="updatePrompt()"> Swiss/Intl</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Neobrutalism"
+                                    onchange="updatePrompt()"> Neobrutalism</label>
+                        </div>
+                        <div class="examples">
+                            <small>Popular:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Glassmorphism\']').checked=true; updatePrompt()">Glassmorphism</a>
+                                •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Dark Mode\']').checked=true; updatePrompt()">Dark
+                                    Mode</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Bento Grids\']').checked=true; updatePrompt()">Bento
+                                    Grids</a></small>
+                        </div>
+
+                        <h3>Lighting & Depth</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Soft Shadows"
+                                    onchange="updatePrompt()"> Soft Shadows</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check"
+                                    value="Volumetric Lighting" onchange="updatePrompt()"> Volumetric Light</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Glow/Bloom"
+                                    onchange="updatePrompt()"> Glow/Bloom</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Isometric 3D"
+                                    onchange="updatePrompt()"> Isometric 3D</label>
+                        </div>
+                        <div class="examples">
+                            <small>Popular:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Soft Shadows\']').checked=true; updatePrompt()">Soft
+                                    Shadows</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Glow/Bloom\']').checked=true; updatePrompt()">Glow/Bloom</a>
+                                •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Isometric 3D\']').checked=true; updatePrompt()">Isometric
+                                    3D</a></small>
+                        </div>
+
+                        <h3>Materials</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Frosted Glass"
+                                    onchange="updatePrompt()"> Frosted Glass</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Metallics"
+                                    onchange="updatePrompt()"> Metallics</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check"
+                                    value="Matte Surfaces" onchange="updatePrompt()"> Matte</label>
+                            <label class="checkbox-item"><input type="checkbox" class="tech-check" value="Gradients"
+                                    onchange="updatePrompt()"> Gradients</label>
+                        </div>
+                        <div class="examples">
+                            <small>Popular:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Gradients\']').checked=true; updatePrompt()">Gradients</a>
+                                •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Metallics\']').checked=true; updatePrompt()">Metallics</a>
+                                •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Frosted Glass\']').checked=true; updatePrompt()">Frosted
+                                    Glass</a></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Layout & Structure -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">4. Layout & Structure
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Frame/Container</label>
+                            <select id="frame" onchange="updatePrompt()">
+                                <option value="Desktop (1440px)">Desktop (1440px)</option>
+                                <option value="Mobile (iPhone)">Mobile (iPhone)</option>
+                                <option value="Dashboard Frame">Dashboard Frame</option>
+                                <option value="Full Canvas">Full Canvas</option>
+                            </select>
+                            <div class="examples">
+                                <small>Popular:
+                                    <a href="#" onclick="setValue('frame', 'Desktop (1440px)')">Desktop</a> •
+                                    <a href="#" onclick="setValue('frame', 'Mobile (iPhone)')">Mobile</a> •
+                                    <a href="#" onclick="setValue('frame', 'Dashboard Frame')">Dashboard</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Navigation Style</label>
+                            <select id="navStyle" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Top Horizontal - Sticky">Top Sticky</option>
+                                <option value="Left Sidebar - Fixed">Left Sidebar</option>
+                                <option value="Minimal - Logo & Hamburger">Minimal</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('navStyle', 'Top Horizontal - Sticky')">Top
+                                        Sticky</a> •
+                                    <a href="#" onclick="setValue('navStyle', 'Left Sidebar - Fixed')">Left
+                                        Sidebar</a> •
+                                    <a href="#"
+                                        onclick="setValue('navStyle', 'Minimal - Logo & Hamburger')">Minimal</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Hero Layout</label>
+                            <select id="heroLayout" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Split Screen (Text Left, Image Right)">Split Screen</option>
+                                <option value="Centered Content">Centered</option>
+                                <option value="Full Background Visual">Full Background</option>
+                                <option value="Card-based">Card-based</option>
+                            </select>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('heroLayout', 'Split Screen (Text Left, Image Right)')">Split
+                                        Screen</a> •
+                                    <a href="#" onclick="setValue('heroLayout', 'Centered Content')">Centered</a> •
+                                    <a href="#" onclick="setValue('heroLayout', 'Full Background Visual')">Full
+                                        Background</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Key Sections (Comma separated)</label>
+                            <textarea id="sections" placeholder="Hero, Features, Social Proof, Pricing, Footer"
+                                oninput="updatePrompt()"></textarea>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('sections', 'Hero, Features, Pricing, Footer')">Landing
+                                        Page</a> •
+                                    <a href="#" onclick="setValue('sections', 'Hero, Features, Testimonials, CTA')">SaaS
+                                        Page</a> •
+                                    <a href="#"
+                                        onclick="setValue('sections', 'Header, Stats, Features, Social Proof')">Dashboard</a></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Design System -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">5. Design System <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Typography</label>
+                            <input type="text" id="typography" placeholder="e.g. Inter (Sans), Playfair (Serif)"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('typography', 'Inter (Sans), Playfair (Serif)')">Inter
+                                        +
+                                        Playfair</a> •
+                                    <a href="#"
+                                        onclick="setValue('typography', 'Roboto (Sans), Roboto Mono (Monospace)')">Roboto
+                                        Family</a> •
+                                    <a href="#" onclick="setValue('typography', 'Poppins (Sans), Lora (Serif)')">Poppins
+                                        +
+                                        Lora</a></small>
+                            </div>
+                        </div>
+
+                        <h3>Colors</h3>
+                        <div class="form-group">
+                            <label>Primary</label>
+                            <input type="text" id="colorPrimary" placeholder="e.g. #6366f1 (Indigo)"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('colorPrimary', '#6366f1 (Indigo)')">Indigo
+                                        #6366f1</a> •
+                                    <a href="#" onclick="setValue('colorPrimary', '#dc2626 (Red)')">Red #dc2626</a>
+                                    •
+                                    <a href="#" onclick="setValue('colorPrimary', '#059669 (Emerald)')">Emerald
+                                        #059669</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Background</label>
+                            <input type="text" id="colorBg" placeholder="e.g. #0f172a (Dark Slate)"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('colorBg', '#0f172a (Dark Slate)')">Dark Slate
+                                        #0f172a</a> •
+                                    <a href="#" onclick="setValue('colorBg', '#ffffff (White)')">White #ffffff</a> •
+                                    <a href="#" onclick="setValue('colorBg', '#1f2937 (Gray 800)')">Gray 800
+                                        #1f2937</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Surface/Cards</label>
+                            <input type="text" id="colorSurface" placeholder="e.g. #1e293b" oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('colorSurface', '#1e293b (Slate 800)')">Slate 800
+                                        #1e293b</a> •
+                                    <a href="#" onclick="setValue('colorSurface', '#f3f4f6 (Gray 100)')">Gray 100
+                                        #f3f4f6</a> •
+                                    <a href="#" onclick="setValue('colorSurface', '#374151 (Gray 700)')">Gray 700
+                                        #374151</a></small>
+                            </div>
+                        </div>
+
+                        <h3>Components</h3>
+                        <div class="form-group">
+                            <label>Button Style</label>
+                            <input type="text" id="btnStyle" placeholder="e.g. Pill shaped, gradient bg, soft shadow"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('btnStyle', 'Pill shaped, gradient bg, soft shadow')">Pill
+                                        Gradient</a> •
+                                    <a href="#"
+                                        onclick="setValue('btnStyle', 'Rounded rectangle, solid color, hover effect')">Solid
+                                        Rounded</a> •
+                                    <a href="#"
+                                        onclick="setValue('btnStyle', 'Ghost button, border only, minimal')">Ghost
+                                        Button</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Card Style</label>
+                            <input type="text" id="cardStyle" placeholder="e.g. Glassmorphism, 1px border, 16px radius"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('cardStyle', 'Glassmorphism, 1px border, 16px radius')">Glassmorphism</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('cardStyle', 'Elevated, 4px shadow, 12px radius')">Elevated</a>
+                                    •
+                                    <a href="#" onclick="setValue('cardStyle', 'Flat, no shadow, 8px radius')">Flat
+                                        Design</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Input Field Style</label>
+                            <input type="text" id="inputStyle" placeholder="e.g. Underline, 48px height, focus border"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('inputStyle', 'Underline, 48px height, focus border')">Underline</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('inputStyle', 'Outlined, 44px height, rounded corners')">Outlined</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('inputStyle', 'Filled background, 40px height, subtle border')">Filled</a></small>
+                            </div>
+                        </div>
+
+                        <h3>Interactive States</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="interaction-check"
+                                    value="Hover effects" onchange="updatePrompt()"> Hover effects</label>
+                            <label class="checkbox-item"><input type="checkbox" class="interaction-check"
+                                    value="Active states" onchange="updatePrompt()"> Active states</label>
+                            <label class="checkbox-item"><input type="checkbox" class="interaction-check"
+                                    value="Loading states" onchange="updatePrompt()"> Loading states</label>
+                            <label class="checkbox-item"><input type="checkbox" class="interaction-check"
+                                    value="Focus indicators" onchange="updatePrompt()"> Focus indicators</label>
+                            <label class="checkbox-item"><input type="checkbox" class="interaction-check"
+                                    value="Disabled states" onchange="updatePrompt()"> Disabled states</label>
+                        </div>
+                        <div class="examples">
+                            <small>Popular:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Hover effects\']').checked=true; updatePrompt()">Hover</a>
+                                •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Focus indicators\']').checked=true; updatePrompt()">Focus</a>
+                                •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Loading states\']').checked=true; updatePrompt()">Loading</a></small>
+                        </div>
+
+                        <h3>Spacing & Layout</h3>
+                        <div class="form-group">
+                            <label>Container Max Width</label>
+                            <input type="text" id="containerWidth" placeholder="e.g. 1200px, 1440px"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('containerWidth', '1200px')">1200px</a> •
+                                    <a href="#" onclick="setValue('containerWidth', '1440px')">1440px</a> •
+                                    <a href="#" onclick="setValue('containerWidth', '1920px')">1920px</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Grid System</label>
+                            <input type="text" id="gridSystem" placeholder="e.g. 12-column, 8pt grid"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('gridSystem', '12-column grid')">12-column</a> •
+                                    <a href="#" onclick="setValue('gridSystem', '8pt grid system')">8pt Grid</a> •
+                                    <a href="#" onclick="setValue('gridSystem', '4px base unit')">4px
+                                        Base</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Border Radius</label>
+                            <input type="text" id="borderRadius" placeholder="e.g. 8px, 12px, 16px"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('borderRadius', '8px')">8px</a> •
+                                    <a href="#" onclick="setValue('borderRadius', '12px')">12px</a> •
+                                    <a href="#" onclick="setValue('borderRadius', '16px')">16px</a></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Technical Implementation -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">6. Technical Implementation
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <h3>Engineering Handoff</h3>
+                        <div class="form-group">
+                            <label>Handoff Format</label>
+                            <select id="handoffFormat" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Figma Dev Mode">Figma Dev Mode</option>
+                                <option value="Zeplin">Zeplin</option>
+                                <option value="Storybook">Storybook</option>
+                                <option value="Design tokens">Design tokens</option>
+                            </select>
+                            <div class="examples">
+                                <small>Popular:
+                                    <a href="#" onclick="setValue('handoffFormat', 'Figma Dev Mode')">Figma Dev
+                                        Mode</a> •
+                                    <a href="#" onclick="setValue('handoffFormat', 'Storybook')">Storybook</a> •
+                                    <a href="#" onclick="setValue('handoffFormat', 'Design tokens')">Design
+                                        tokens</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Component Documentation</label>
+                            <input type="text" id="componentDocs" placeholder="e.g. Props, states, usage examples"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('componentDocs', 'Props, states, usage examples')">Props &
+                                        States</a> •
+                                    <a href="#"
+                                        onclick="setValue('componentDocs', 'Variants, accessibility, code snippets')">Variants
+                                        & A11y</a> •
+                                    <a href="#"
+                                        onclick="setValue('componentDocs', 'Design tokens, spacing, typography')">Design
+                                        Tokens</a></small>
+                            </div>
+                        </div>
+
+                        <h3>Performance & Optimization</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="performance-check"
+                                    value="Optimized for loading speed" onchange="updatePrompt()"> Optimized for
+                                loading speed</label>
+                            <label class="checkbox-item"><input type="checkbox" class="performance-check"
+                                    value="Responsive images" onchange="updatePrompt()"> Responsive images</label>
+                            <label class="checkbox-item"><input type="checkbox" class="performance-check"
+                                    value="Lazy loading" onchange="updatePrompt()"> Lazy loading</label>
+                            <label class="checkbox-item"><input type="checkbox" class="performance-check"
+                                    value="Code splitting" onchange="updatePrompt()"> Code splitting</label>
+                            <label class="checkbox-item"><input type="checkbox" class="performance-check"
+                                    value="CDN optimized" onchange="updatePrompt()"> CDN optimized</label>
+                        </div>
+                        <div class="examples">
+                            <small>Key:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Optimized for loading speed\']').checked=true; updatePrompt()">Loading
+                                    Speed</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Responsive images\']').checked=true; updatePrompt()">Responsive
+                                    Images</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Lazy loading\']').checked=true; updatePrompt()">Lazy
+                                    Loading</a></small>
+                        </div>
+
+                        <h3>Testing & QA</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="testing-check"
+                                    value="Cross-browser compatibility" onchange="updatePrompt()"> Cross-browser
+                                compatibility</label>
+                            <label class="checkbox-item"><input type="checkbox" class="testing-check"
+                                    value="Device testing" onchange="updatePrompt()"> Device testing</label>
+                            <label class="checkbox-item"><input type="checkbox" class="testing-check"
+                                    value="Performance testing" onchange="updatePrompt()"> Performance
+                                testing</label>
+                            <label class="checkbox-item"><input type="checkbox" class="testing-check"
+                                    value="Accessibility testing" onchange="updatePrompt()"> Accessibility
+                                testing</label>
+                        </div>
+                        <div class="examples">
+                            <small>Essential:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Cross-browser compatibility\']').checked=true; updatePrompt()">Cross-browser</a>
+                                •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Device testing\']').checked=true; updatePrompt()">Device
+                                    Testing</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Accessibility testing\']').checked=true; updatePrompt()">Accessibility</a></small>
+                        </div>
+
+                        <h3>Motion & Animation</h3>
+                        <div class="form-group">
+                            <label>Animation Style</label>
+                            <select id="animationStyle" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Subtle micro-interactions">Subtle micro-interactions</option>
+                                <option value="Smooth transitions">Smooth transitions</option>
+                                <option value="Parallax scrolling">Parallax scrolling</option>
+                                <option value="Loading animations">Loading animations</option>
+                                <option value="No animations">No animations</option>
+                            </select>
+                            <div class="examples">
+                                <small>Popular:
+                                    <a href="#"
+                                        onclick="setValue('animationStyle', 'Subtle micro-interactions')">Micro-interactions</a>
+                                    •
+                                    <a href="#" onclick="setValue('animationStyle', 'Smooth transitions')">Smooth
+                                        Transitions</a> •
+                                    <a href="#" onclick="setValue('animationStyle', 'Loading animations')">Loading
+                                        Animations</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Transition Duration</label>
+                            <input type="text" id="transitionDuration" placeholder="e.g. 200ms, 300ms"
+                                oninput="updatePrompt()">
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#" onclick="setValue('transitionDuration', '200ms')">200ms</a> •
+                                    <a href="#" onclick="setValue('transitionDuration', '300ms')">300ms</a> •
+                                    <a href="#" onclick="setValue('transitionDuration', '400ms')">400ms</a></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 7: Advanced Strategy -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">7. UX Strategy & Content
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Value Proposition</label>
+                            <textarea id="valueProp" placeholder="Core promise to the user..."
+                                oninput="updatePrompt()"></textarea>
+                            <div class="examples">
+                                <small>Examples:
+                                    <a href="#"
+                                        onclick="setValue('valueProp', 'Save time with automated workflows')">Save
+                                        Time</a> •
+                                    <a href="#"
+                                        onclick="setValue('valueProp', 'Increase productivity with smart tools')">Boost
+                                        Productivity</a> •
+                                    <a href="#"
+                                        onclick="setValue('valueProp', 'Simplify complex processes')">Simplify</a></small>
+                            </div>
+                        </div>
+
+                        <h3>UX Strategy</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                    value="Reduce cognitive load" onchange="updatePrompt()"> Reduce cognitive
+                                load</label>
+                            <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                    value="Focus on outcomes, not features" onchange="updatePrompt()"> Focus on
+                                outcomes</label>
+                            <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                    value="One primary action" onchange="updatePrompt()"> One primary action</label>
+                            <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                    value="Progressive disclosure" onchange="updatePrompt()"> Progressive
+                                disclosure</label>
+                            <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                    value="Avoid dark patterns" onchange="updatePrompt()"> Avoid dark
+                                patterns</label>
+                        </div>
+                        <div class="examples">
+                            <small>Key:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Reduce cognitive load\']').checked=true; updatePrompt()">Reduce
+                                    Load</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Focus on outcomes, not features\']').checked=true; updatePrompt()">Outcome
+                                    Focus</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Progressive disclosure\']').checked=true; updatePrompt()">Progressive
+                                    Disclosure</a></small>
+                        </div>
+
+                        <h3>Accessibility & Compliance</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="access-check" value="WCAG 2.1 AA"
+                                    onchange="updatePrompt()"> WCAG 2.1 AA</label>
+                            <label class="checkbox-item"><input type="checkbox" class="access-check"
+                                    value="Clear contrast ratios" onchange="updatePrompt()"> Clear contrast</label>
+                            <label class="checkbox-item"><input type="checkbox" class="access-check"
+                                    value="Readable typography" onchange="updatePrompt()"> Readable
+                                typography</label>
+                            <label class="checkbox-item"><input type="checkbox" class="access-check"
+                                    value="Keyboard navigation" onchange="updatePrompt()"> Keyboard
+                                navigation</label>
+                            <label class="checkbox-item"><input type="checkbox" class="access-check"
+                                    value="Screen reader friendly" onchange="updatePrompt()"> Screen reader
+                                friendly</label>
+                        </div>
+                        <div class="examples">
+                            <small>Essential:
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'WCAG 2.1 AA\']').checked=true; updatePrompt()">WCAG
+                                    2.1</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Clear contrast ratios\']').checked=true; updatePrompt()">Clear
+                                    Contrast</a> •
+                                <a href="#"
+                                    onclick="document.querySelector('input[value=\'Keyboard navigation\']').checked=true; updatePrompt()">Keyboard
+                                    Nav</a></small>
+                        </div>
+
+                        <h3>Output Specifications</h3>
+                        <div class="form-group">
+                            <label>Output Format</label>
+                            <select id="outputFormat" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Desktop frames">Desktop frames</option>
+                                <option value="Mobile screens">Mobile screens</option>
+                                <option value="Component library">Component library</option>
+                                <option value="Both desktop and mobile">Both desktop and mobile</option>
+                                <option value="No decorative mockups">No decorative mockups</option>
+                            </select>
+                            <div class="examples">
+                                <small>Common:
+                                    <a href="#" onclick="setValue('outputFormat', 'Both desktop and mobile')">Desktop +
+                                        Mobile</a> •
+                                    <a href="#" onclick="setValue('outputFormat', 'Component library')">Component
+                                        Library</a> •
+                                    <a href="#" onclick="setValue('outputFormat', 'Desktop frames')">Desktop
+                                        Frames</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Responsive Behavior</label>
+                            <select id="responsive" onchange="updatePrompt()">
+                                <option value="">Select...</option>
+                                <option value="Mobile-first">Mobile-first</option>
+                                <option value="Desktop-first">Desktop-first</option>
+                                <option value="Flexible layouts">Flexible layouts</option>
+                                <option value="Supports localization">Supports localization</option>
+                            </select>
+                            <div class="examples">
+                                <small>Approaches:
+                                    <a href="#" onclick="setValue('responsive', 'Mobile-first')">Mobile-first</a> •
+                                    <a href="#" onclick="setValue('responsive', 'Desktop-first')">Desktop-first</a>
+                                    •
+                                    <a href="#"
+                                        onclick="setValue('responsive', 'Flexible layouts')">Flexible</a></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>UX Strategy</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                        value="Reduce Cognitive Load" onchange="updatePrompt()"> Low Cog
+                                    Load</label>
+                                <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                        value="Progressive Disclosure" onchange="updatePrompt()"> Prog.
+                                    Disclosure</label>
+                                <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                        value="Clear Visual Hierarchy" onchange="updatePrompt()"> Clear
+                                    Hierarchy</label>
+                                <label class="checkbox-item"><input type="checkbox" class="ux-check"
+                                        value="Outcome Focused" onchange="updatePrompt()"> Outcome Focus</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 8: Campaign Brief -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">8. Campaign Brief
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Objective</label>
+                            <input type="text" id="campaignObjective" placeholder="e.g. Increase signups by 20%" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Primary KPI</label>
+                            <input type="text" id="campaignKPI" placeholder="e.g. CPA, CTR, CVR" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Budget</label>
+                            <input type="text" id="campaignBudget" placeholder="e.g. $10,000 total / $500 per day" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Timeline</label>
+                            <input type="text" id="campaignTimeline" placeholder="e.g. 4 weeks, start MM/DD" oninput="updatePrompt()">
+                        </div>
+                        <h3>Channels</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="Meta Ads" onchange="updatePrompt()"> Meta Ads</label>
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="Google Ads" onchange="updatePrompt()"> Google Ads</label>
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="YouTube" onchange="updatePrompt()"> YouTube</label>
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="Email" onchange="updatePrompt()"> Email</label>
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="SMS" onchange="updatePrompt()"> SMS</label>
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="TikTok" onchange="updatePrompt()"> TikTok</label>
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="LinkedIn" onchange="updatePrompt()"> LinkedIn</label>
+                            <label class="checkbox-item"><input type="checkbox" class="channel-check" value="Organic SEO" onchange="updatePrompt()"> Organic SEO</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Audience Segments</label>
+                            <textarea id="campaignAudienceSegments" placeholder="e.g. Founders (US), SMB, enterprise buyers" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Geo/Language</label>
+                            <input type="text" id="campaignGeoLanguage" placeholder="e.g. US-English, EU-German" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Compliance Notes</label>
+                            <textarea id="campaignCompliance" placeholder="e.g. financial disclaimers, healthcare constraints" oninput="updatePrompt()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 9: Creative Requirements -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">9. Creative Requirements
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Assets</label>
+                            <textarea id="creativeAssets" placeholder="e.g. 1080x1080, 1080x1920, 1200x628; logo, icon set" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Copy Tone</label>
+                            <input type="text" id="creativeCopyTone" placeholder="e.g. Professional, approachable, no jargon" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Brand Elements</label>
+                            <textarea id="creativeBrandElements" placeholder="e.g. colors, type, mandatory badges" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Legal/Disclaimers</label>
+                            <textarea id="creativeLegal" placeholder="e.g. ©, ™, terms, disclosures" oninput="updatePrompt()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 10: Testing Plan -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">10. Testing Plan
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Hypotheses</label>
+                            <textarea id="testingHypotheses" placeholder="e.g. Value-led headline outperforms feature-led" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Variants</label>
+                            <textarea id="testingVariants" placeholder="e.g. A/B/C variants, CTA position, image style" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Metrics</label>
+                            <input type="text" id="testingMetrics" placeholder="e.g. CTR, CVR, revenue per visitor" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Rollout Plan</label>
+                            <textarea id="testingRollout" placeholder="e.g. 10% ramp-up, stop-loss, success threshold" oninput="updatePrompt()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 11: Tracking & Handoff -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">11. Tracking & Handoff
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>UTM Structure</label>
+                            <textarea id="trackingUTMStructure" placeholder="e.g. source, medium, campaign, content, term" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Naming Conventions</label>
+                            <textarea id="trackingNamingConventions" placeholder="e.g. asset_vX_variantY_channelZ" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Experiment IDs</label>
+                            <input type="text" id="trackingExperimentIDs" placeholder="e.g. EXP-2026-001, EXP-2026-002" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Target Events</label>
+                            <textarea id="trackingTargetEvents" placeholder="e.g. signup_start, signup_complete, purchase" oninput="updatePrompt()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 12: Prompt Quality Controls -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">12. Prompt Quality Controls
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Background Context</label>
+                            <textarea id="pqContext" placeholder="Domain details, constraints, assumptions..." oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>User Intent Statement</label>
+                            <textarea id="pqIntent" placeholder="What the user truly wants and why..." oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Constraints & Rules</label>
+                            <textarea id="pqConstraints" placeholder="Word limits, formatting rules, forbidden topics..." oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Negative Instructions (Avoid)</label>
+                            <textarea id="pqNegatives" placeholder="E.g., avoid jargon, no guesses, no hallucinations..." oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Response Length</label>
+                            <input type="text" id="pqLength" placeholder="e.g. 150–200 words or 'as needed'" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Response Structure</label>
+                            <textarea id="pqStructure" placeholder="Required sections, headings, bullet styles..." oninput="updatePrompt()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 13: Few-shot Examples -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">13. Few-shot Examples
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label><input type="checkbox" class="example-include" value="ex1" onchange="updatePrompt()"> Include Example 1</label>
+                            <input type="text" id="ex1Title" placeholder="Example 1 Title" oninput="updatePrompt()">
+                            <textarea id="ex1Input" placeholder="Example 1 Input/Instruction" oninput="updatePrompt()"></textarea>
+                            <textarea id="ex1Output" placeholder="Example 1 Ideal Output" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" class="example-include" value="ex2" onchange="updatePrompt()"> Include Example 2</label>
+                            <input type="text" id="ex2Title" placeholder="Example 2 Title" oninput="updatePrompt()">
+                            <textarea id="ex2Input" placeholder="Example 2 Input/Instruction" oninput="updatePrompt()"></textarea>
+                            <textarea id="ex2Output" placeholder="Example 2 Ideal Output" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" class="example-include" value="ex3" onchange="updatePrompt()"> Include Example 3</label>
+                            <input type="text" id="ex3Title" placeholder="Example 3 Title" oninput="updatePrompt()">
+                            <textarea id="ex3Input" placeholder="Example 3 Input/Instruction" oninput="updatePrompt()"></textarea>
+                            <textarea id="ex3Output" placeholder="Example 3 Ideal Output" oninput="updatePrompt()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 14: Citations & Safety -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">14. Citations & Safety
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <h3>Fact-check & Citations</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="safety-check" value="Require citations" onchange="updatePrompt()"> Require citations</label>
+                            <label class="checkbox-item"><input type="checkbox" class="safety-check" value="Prefer authoritative sources" onchange="updatePrompt()"> Prefer authoritative sources</label>
+                            <label class="checkbox-item"><input type="checkbox" class="safety-check" value="Acknowledge uncertainty" onchange="updatePrompt()"> Acknowledge uncertainty</label>
+                            <label class="checkbox-item"><input type="checkbox" class="safety-check" value="Avoid hallucinations" onchange="updatePrompt()"> Avoid hallucinations</label>
+                        </div>
+                        <h3>Safety & Privacy</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="privacy-check" value="No PII or secrets" onchange="updatePrompt()"> No PII or secrets</label>
+                            <label class="checkbox-item"><input type="checkbox" class="privacy-check" value="Redact sensitive data" onchange="updatePrompt()"> Redact sensitive data</label>
+                            <label class="checkbox-item"><input type="checkbox" class="privacy-check" value="Comply with policies" onchange="updatePrompt()"> Comply with policies</label>
+                        </div>
+                        <h3>Critique & Revise</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" class="critique-check" value="Self-critique first draft" onchange="updatePrompt()"> Self-critique first draft</label>
+                            <label class="checkbox-item"><input type="checkbox" class="critique-check" value="List assumptions & risks" onchange="updatePrompt()"> List assumptions & risks</label>
+                            <label class="checkbox-item"><input type="checkbox" class="critique-check" value="Revise based on critique" onchange="updatePrompt()"> Revise based on critique</label>
+                            <label class="checkbox-item"><input type="checkbox" class="critique-check" value="Stop if confidence low" onchange="updatePrompt()"> Stop if confidence low</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 15: Response Schema & Language -->
+                <div class="accordion-item">
+                    <button type="button" class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="false">15. Response Schema & Language
+                        <span>▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Preferred Language</label>
+                            <input type="text" id="respLanguage" placeholder="e.g. English (US), Spanish (ES)" oninput="updatePrompt()">
+                        </div>
+                        <div class="form-group">
+                            <label>Voice & Tone Guidelines</label>
+                            <textarea id="respVoice" placeholder="e.g. formal, concise, technical; avoid colloquialisms" oninput="updatePrompt()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Output Schema (JSON or Markdown structure)</label>
+                            <textarea id="respSchema" placeholder='e.g. JSON keys: title, summary, bullets[]; or Markdown sections' oninput="updatePrompt()"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+    <div class="main-area">
+        <div class="preview-header">
+            <div>
+                <h2 style="margin:0; border:none; color:var(--text-primary);">Prompt Preview</h2>
+                <p style="margin:0; font-size:0.8rem; color:var(--text-secondary);">Copy or download optimized prompts</p>
+            </div>
+            <div class="header-controls">
+                <div class="format-toggle" title="Output format">
+                    <label><input type="radio" name="fmt" value="markdown" checked onchange="updatePrompt()"> Markdown</label>
+                    <label><input type="radio" name="fmt" value="plain" onchange="updatePrompt()"> Plain</label>
+                    <label><input type="radio" name="fmt" value="json" onchange="updatePrompt()"> JSON</label>
+                </div>
+                <button class="btn" onclick="copyToClipboard()">Copy</button>
+                <button class="btn-secondary" onclick="downloadOutput()">Download</button>
+                <button class="btn-secondary" onclick="exportConfig()">Export JSON</button>
+                <input type="file" id="importFile" accept="application/json" style="display:none" />
+                <button class="btn-secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
+                <button class="btn-secondary" onclick="copyShareLink()">Share Link</button>
+                <button class="btn-secondary" onclick="resetForm()">Reset</button>
+                <button class="btn-secondary" onclick="toggleTheme()">Toggle Theme</button>
+                <button class="btn-secondary" onclick="savePreset()">Save Preset</button>
+                <button class="btn-secondary" onclick="loadPresetPrompt()">Load Preset</button>
+                <button class="btn-secondary" onclick="deletePresetPrompt()">Delete Preset</button>
+                <span id="outputCounts" class="counts"></span>
+            </div>
+        </div>
+        <div id="promptOutput" class="output-container"></div>
+    </div>
+
+    <script>
+        let debounceId;
+        function toggleAccordion(header) {
+            const item = header.closest('.accordion-item');
+            const content = item.querySelector('.accordion-content');
+            const wasActive = item.classList.contains('active');
+            if (!wasActive) {
+                item.classList.add('active');
+                header.setAttribute('aria-expanded', 'true');
+                content.style.display = 'block';
+            } else {
+                item.classList.remove('active');
+                header.setAttribute('aria-expanded', 'false');
+                content.style.display = 'none';
+            }
+        }
+        function initAccordions() {
+            document.querySelectorAll('.accordion-item').forEach((item, idx) => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const cid = `acc-content-${idx}`;
+                content.id = cid;
+                header.setAttribute('aria-controls', cid);
+                const active = item.classList.contains('active');
+                header.setAttribute('aria-expanded', active ? 'true' : 'false');
+                content.style.display = active ? 'block' : 'none';
+            });
+        }
+        function getCheckedValues(className) {
+            const checkboxes = document.querySelectorAll('.' + className + ':checked');
+            return Array.from(checkboxes).map(cb => cb.value).join(', ');
+        }
+        function getCheckedArray(className) {
+            const checkboxes = document.querySelectorAll('.' + className + ':checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+        function setValue(fieldId, value) {
+            const el = document.getElementById(fieldId);
+            if (el) el.value = value;
+            updatePrompt();
+        }
+        function collectState() {
+            const ids = [
+                'role','type','goal','audience','decision','aiTool','mood','maturity','aesthetic','complexity',
+                'representation','formLanguage','gender','valuePerception','emotionalTone','energyLevel','frame',
+                'navStyle','heroLayout','sections','typography','colorPrimary','colorBg','colorSurface','btnStyle',
+                'cardStyle','inputStyle','containerWidth','gridSystem','borderRadius','valueProp','outputFormat',
+                'responsive','handoffFormat','componentDocs','animationStyle','transitionDuration',
+                'campaignObjective','campaignKPI','campaignBudget','campaignTimeline','campaignAudienceSegments',
+                'campaignGeoLanguage','campaignCompliance','creativeAssets','creativeCopyTone','creativeBrandElements',
+                'creativeLegal','testingHypotheses','testingVariants','testingMetrics','testingRollout',
+                'trackingUTMStructure','trackingNamingConventions','trackingExperimentIDs','trackingTargetEvents',
+                'pqContext','pqIntent','pqConstraints','pqNegatives','pqLength','pqStructure',
+                'ex1Title','ex1Input','ex1Output','ex2Title','ex2Input','ex2Output','ex3Title','ex3Input','ex3Output',
+                'respLanguage','respVoice','respSchema'
+            ];
+            const state = {};
+            ids.forEach(id => { const el = document.getElementById(id); if (el) state[id] = el.value || ''; });
+            state.techniques = getCheckedArray('tech-check');
+            state.interactions = getCheckedArray('interaction-check');
+            state.uxStrategy = getCheckedArray('ux-check');
+            state.accessFeatures = getCheckedArray('access-check');
+            state.performance = getCheckedArray('performance-check');
+            state.testing = getCheckedArray('testing-check');
+            state.channels = getCheckedArray('channel-check');
+            state.safety = getCheckedArray('safety-check');
+            state.privacy = getCheckedArray('privacy-check');
+            state.critique = getCheckedArray('critique-check');
+            state.examplesIncluded = getCheckedArray('example-include');
+            state.format = document.querySelector('input[name="fmt"]:checked')?.value || 'markdown';
+            state.theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            return state;
+        }
+        function applyState(state) {
+            Object.entries(state).forEach(([k,v]) => {
+                if (['techniques','interactions','uxStrategy','accessFeatures','performance','testing','channels','format','theme'].includes(k)) return;
+                const el = document.getElementById(k);
+                if (el && typeof v === 'string') el.value = v;
+            });
+            const map = {
+                'techniques':'tech-check',
+                'interactions':'interaction-check',
+                'uxStrategy':'ux-check',
+                'accessFeatures':'access-check',
+                'performance':'performance-check',
+                'testing':'testing-check',
+                'channels':'channel-check'
+            };
+            Object.entries(map).forEach(([key, cls]) => {
+                const arr = state[key] || [];
+                document.querySelectorAll('.' + cls).forEach(cb => cb.checked = arr.includes(cb.value));
+            });
+            const fmtEl = document.querySelector(`input[name="fmt"][value="${state.format||'markdown'}"]`);
+            if (fmtEl) fmtEl.checked = true;
+            if (state.theme) document.documentElement.setAttribute('data-theme', state.theme);
+            if (state.examplesIncluded) {
+                document.querySelectorAll('.example-include').forEach(cb => cb.checked = state.examplesIncluded.includes(cb.value));
+            }
+            updatePrompt();
+        }
+        function saveState(name='autosave') {
+            try {
+                localStorage.setItem(`udpg:${name}`, JSON.stringify(collectState()));
+            } catch {}
+        }
+        function loadState(name='autosave') {
+            try {
+                const raw = localStorage.getItem(`udpg:${name}`);
+                if (!raw) return;
+                applyState(JSON.parse(raw));
+            } catch {}
+        }
+        function exportConfig(){
+            const blob = new Blob([JSON.stringify(collectState(), null, 2)], {type:'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = 'prompt-config.json'; a.click();
+            URL.revokeObjectURL(a.href);
+        }
+        function importConfigFile(file){
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const s = JSON.parse(reader.result);
+                    applyState(s);
+                    saveState('import');
+                } catch {}
+            };
+            reader.readAsText(file);
+        }
+        function copyShareLink(){
+            const s = collectState();
+            const json = JSON.stringify(s);
+            const encoded = encodeURIComponent(json);
+            const url = `${location.origin}${location.pathname}#state=${encoded}`;
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(url).then(()=>{ /* no-op */ });
+            } else {
+                const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta);
+                ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+            }
+        }
+        function parseShareLink(){
+            const hash = location.hash || '';
+            const m = hash.match(/#state=(.+)$/);
+            if (!m) return;
+            try {
+                const json = decodeURIComponent(m[1]);
+                const s = JSON.parse(json);
+                applyState(s);
+            } catch {}
+        }
+        function downloadOutput(){
+            const fmt = document.querySelector('input[name="fmt"]:checked')?.value || 'markdown';
+            const text = document.getElementById('promptOutput').textContent || '';
+            const ext = fmt === 'json' ? 'json' : (fmt === 'plain' ? 'txt' : 'md');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([text], {type:'text/plain'}));
+            a.download = `prompt-output.${ext}`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+        function copyToClipboard() {
+            const text = document.getElementById('promptOutput').textContent;
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = document.querySelector('.main-area .btn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '✅ Copied!';
+                    setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+                });
+            } else {
+                const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta);
+                ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+            }
+        }
+        function getOutputFormat(){ return document.querySelector('input[name="fmt"]:checked')?.value || 'markdown'; }
+        function updateCounts(text) {
+            const chars = text.length;
+            const tokens = Math.ceil(chars / 4);
+            const el = document.getElementById('outputCounts');
+            if (el) el.textContent = `Chars: ${chars} · Est. tokens: ${tokens}`;
+        }
+        function updatePrompt() {
+            clearTimeout(debounceId);
+            debounceId = setTimeout(()=>saveState(), 200);
+            // 1. Core
+            const role = document.getElementById('role').value || '[Role]';
+            const type = document.getElementById('type').value || '[Project Type]';
+            const goal = document.getElementById('goal').value || '[Primary Goal]';
+            const audience = document.getElementById('audience').value || '[Target Audience]';
+            const decision = document.getElementById('decision').value || '[User Decision]';
+            const aiTool = document.getElementById('aiTool').value || '[AI Tool]';
+            // 2. Visual DNA
+            const mood = document.getElementById('mood').value;
+            const maturity = document.getElementById('maturity').value;
+            const aesthetic = document.getElementById('aesthetic').value;
+            const complexity = document.getElementById('complexity').value;
+            const representation = document.getElementById('representation').value;
+            const formLanguage = document.getElementById('formLanguage').value;
+            const gender = document.getElementById('gender').value;
+            const valuePerception = document.getElementById('valuePerception').value;
+            const emotionalTone = document.getElementById('emotionalTone').value;
+            const energyLevel = document.getElementById('energyLevel').value;
+            // 3. Tech
+            const techniques = getCheckedValues('tech-check');
+            // 4. Layout
+            const frame = document.getElementById('frame').value;
+            const navStyle = document.getElementById('navStyle').value;
+            const heroLayout = document.getElementById('heroLayout').value;
+            const sections = document.getElementById('sections').value;
+            // 5. Design System
+            const typography = document.getElementById('typography').value;
+            const colorPrimary = document.getElementById('colorPrimary').value;
+            const colorBg = document.getElementById('colorBg').value;
+            const colorSurface = document.getElementById('colorSurface').value;
+            const btnStyle = document.getElementById('btnStyle').value;
+            const cardStyle = document.getElementById('cardStyle').value;
+            const inputStyle = document.getElementById('inputStyle').value;
+            const containerWidth = document.getElementById('containerWidth').value;
+            const gridSystem = document.getElementById('gridSystem').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+            const interactions = getCheckedValues('interaction-check');
+            // 6. Strategy
+            const valueProp = document.getElementById('valueProp').value;
+            const uxStrategy = getCheckedValues('ux-check');
+            const accessFeatures = getCheckedValues('access-check');
+            const outputFormat = document.getElementById('outputFormat').value;
+            const responsive = document.getElementById('responsive').value;
+            // 7. Technical Implementation
+            const handoffFormat = document.getElementById('handoffFormat').value;
+            const componentDocs = document.getElementById('componentDocs').value;
+            const performance = getCheckedValues('performance-check');
+            const testing = getCheckedValues('testing-check');
+            const animationStyle = document.getElementById('animationStyle').value;
+            const transitionDuration = document.getElementById('transitionDuration').value;
+            // 8. Marketing sections
+            const campaignObjective = document.getElementById('campaignObjective')?.value || '';
+            const campaignKPI = document.getElementById('campaignKPI')?.value || '';
+            const campaignBudget = document.getElementById('campaignBudget')?.value || '';
+            const campaignTimeline = document.getElementById('campaignTimeline')?.value || '';
+            const campaignChannels = getCheckedValues('channel-check');
+            const campaignAudienceSegments = document.getElementById('campaignAudienceSegments')?.value || '';
+            const campaignGeoLanguage = document.getElementById('campaignGeoLanguage')?.value || '';
+            const campaignCompliance = document.getElementById('campaignCompliance')?.value || '';
+            const creativeAssets = document.getElementById('creativeAssets')?.value || '';
+            const creativeCopyTone = document.getElementById('creativeCopyTone')?.value || '';
+            const creativeBrandElements = document.getElementById('creativeBrandElements')?.value || '';
+            const creativeLegal = document.getElementById('creativeLegal')?.value || '';
+            const testingHypotheses = document.getElementById('testingHypotheses')?.value || '';
+            const testingVariants = document.getElementById('testingVariants')?.value || '';
+            const testingMetrics = document.getElementById('testingMetrics')?.value || '';
+            const testingRollout = document.getElementById('testingRollout')?.value || '';
+            const trackingUTMStructure = document.getElementById('trackingUTMStructure')?.value || '';
+            const trackingNamingConventions = document.getElementById('trackingNamingConventions')?.value || '';
+            const trackingExperimentIDs = document.getElementById('trackingExperimentIDs')?.value || '';
+            const trackingTargetEvents = document.getElementById('trackingTargetEvents')?.value || '';
+            // 9. Prompt Quality
+            const pqContext = document.getElementById('pqContext')?.value || '';
+            const pqIntent = document.getElementById('pqIntent')?.value || '';
+            const pqConstraints = document.getElementById('pqConstraints')?.value || '';
+            const pqNegatives = document.getElementById('pqNegatives')?.value || '';
+            const pqLength = document.getElementById('pqLength')?.value || '';
+            const pqStructure = document.getElementById('pqStructure')?.value || '';
+            // 10. Few-shot
+            const includeEx1 = document.querySelector('.example-include[value="ex1"]')?.checked;
+            const includeEx2 = document.querySelector('.example-include[value="ex2"]')?.checked;
+            const includeEx3 = document.querySelector('.example-include[value="ex3"]')?.checked;
+            const ex1Title = document.getElementById('ex1Title')?.value || '';
+            const ex1Input = document.getElementById('ex1Input')?.value || '';
+            const ex1Output = document.getElementById('ex1Output')?.value || '';
+            const ex2Title = document.getElementById('ex2Title')?.value || '';
+            const ex2Input = document.getElementById('ex2Input')?.value || '';
+            const ex2Output = document.getElementById('ex2Output')?.value || '';
+            const ex3Title = document.getElementById('ex3Title')?.value || '';
+            const ex3Input = document.getElementById('ex3Input')?.value || '';
+            const ex3Output = document.getElementById('ex3Output')?.value || '';
+            // 11. Citations & Safety
+            const safety = getCheckedValues('safety-check');
+            const privacy = getCheckedValues('privacy-check');
+            const critique = getCheckedValues('critique-check');
+            // 12. Response Schema & Language
+            const respLanguage = document.getElementById('respLanguage')?.value || '';
+            const respVoice = document.getElementById('respVoice')?.value || '';
+            const respSchema = document.getElementById('respSchema')?.value || '';
+            const fmt = getOutputFormat();
+            if (fmt === 'json') {
+                const jsonSpec = {
+                    role, type, goal, audience, decision, aiTool,
+                    visual: { mood, maturity, aesthetic, complexity, representation, formLanguage, gender, valuePerception, emotionalTone, energyLevel, techniques },
+                    layout: { frame, navStyle, heroLayout, sections: sections ? sections.split(',').map(s=>s.trim()).filter(Boolean) : [] },
+                    components: { typography, colorPrimary, colorBg, colorSurface, btnStyle, cardStyle, inputStyle, interactions, containerWidth, gridSystem, borderRadius },
+                    technical: { handoffFormat, componentDocs, performance, testing, animationStyle, transitionDuration },
+                    ux: { valueProp, uxStrategy, accessFeatures, responsive, outputFormat },
+                    campaign: { objective: campaignObjective, kpi: campaignKPI, budget: campaignBudget, timeline: campaignTimeline, channels: campaignChannels, audienceSegments: campaignAudienceSegments, geoLanguage: campaignGeoLanguage, compliance: campaignCompliance },
+                    creative: { assets: creativeAssets, copyTone: creativeCopyTone, brandElements: creativeBrandElements, legal: creativeLegal },
+                    qa: { hypotheses: testingHypotheses, variants: testingVariants, metrics: testingMetrics, rollout: testingRollout },
+                    tracking: { utm: trackingUTMStructure, naming: trackingNamingConventions, experiments: trackingExperimentIDs, events: trackingTargetEvents },
+                    prompt_quality: { context: pqContext, intent: pqIntent, constraints: pqConstraints, negatives: pqNegatives, length: pqLength, structure: pqStructure },
+                    few_shot: [
+                        includeEx1 ? { title: ex1Title, input: ex1Input, output: ex1Output } : null,
+                        includeEx2 ? { title: ex2Title, input: ex2Input, output: ex2Output } : null,
+                        includeEx3 ? { title: ex3Title, input: ex3Input, output: ex3Output } : null
+                    ].filter(Boolean),
+                    safety: { fact_check: safety, privacy: privacy, critique: critique },
+                    response: { language: respLanguage, voice: respVoice, schema: respSchema }
+                };
+                const text = JSON.stringify(jsonSpec, null, 2);
+                document.getElementById('promptOutput').textContent = text;
+                updateCounts(text);
+                return;
+            }
+            if (fmt === 'plain') {
+                let p = '';
+                p += `ROLE: ${role}\nPROJECT: ${type}\nGOAL: ${goal}\nAUDIENCE: ${audience}\n`;
+                if (decision) p += `DECISION: ${decision}\n`;
+                if (aiTool && aiTool !== '[AI Tool]') p += `AI TOOL: ${aiTool}\n`;
+                if (valueProp) p += `VALUE PROP: ${valueProp}\n`;
+                p += `\nVISUAL: mood=${mood||'n/a'} maturity=${maturity||'n/a'} aesthetic=${aesthetic||'n/a'} complexity=${complexity||'n/a'} representation=${representation||'n/a'} form=${formLanguage||'n/a'} gender=${gender||'n/a'} value=${valuePerception||'n/a'} tone=${emotionalTone||'n/a'} energy=${energyLevel||'n/a'} techniques=${techniques||'n/a'}\n`;
+                p += `COLORS: primary=${colorPrimary||'n/a'} bg=${colorBg||'n/a'} surface=${colorSurface||'n/a'}\n`;
+                p += `LAYOUT: frame=${frame} nav=${navStyle||'n/a'} hero=${heroLayout||'n/a'} sections=${sections||'n/a'}\n`;
+                p += `COMPONENTS: type=${typography||'n/a'} buttons=${btnStyle||'n/a'} cards=${cardStyle||'n/a'} inputs=${inputStyle||'n/a'} interactions=${interactions||'n/a'} width=${containerWidth||'n/a'} grid=${gridSystem||'n/a'} radius=${borderRadius||'n/a'}\n`;
+                p += `TECH: handoff=${handoffFormat||'n/a'} docs=${componentDocs||'n/a'} perf=${performance||'n/a'} testing=${testing||'n/a'} animation=${animationStyle||'n/a'} duration=${transitionDuration||'n/a'}\n`;
+                p += `UX: strategy=${uxStrategy||'n/a'} access=${accessFeatures||'n/a'} responsive=${responsive||'n/a'} output=${outputFormat||'n/a'}\n`;
+                p += `CAMPAIGN: objective=${campaignObjective||'n/a'} kpi=${campaignKPI||'n/a'} budget=${campaignBudget||'n/a'} timeline=${campaignTimeline||'n/a'} channels=${campaignChannels||'n/a'} audience=${campaignAudienceSegments||'n/a'} geo=${campaignGeoLanguage||'n/a'} compliance=${campaignCompliance||'n/a'}\n`;
+                p += `CREATIVE: assets=${creativeAssets||'n/a'} tone=${creativeCopyTone||'n/a'} brand=${creativeBrandElements||'n/a'} legal=${creativeLegal||'n/a'}\n`;
+                p += `QA: hypotheses=${testingHypotheses||'n/a'} variants=${testingVariants||'n/a'} metrics=${testingMetrics||'n/a'} rollout=${testingRollout||'n/a'}\n`;
+                p += `TRACKING: utm=${trackingUTMStructure||'n/a'} naming=${trackingNamingConventions||'n/a'} experiments=${trackingExperimentIDs||'n/a'} events=${trackingTargetEvents||'n/a'}\n`;
+                p += `PQ: context=${pqContext||'n/a'} intent=${pqIntent||'n/a'} constraints=${pqConstraints||'n/a'} negatives=${pqNegatives||'n/a'} length=${pqLength||'n/a'} structure=${pqStructure||'n/a'}\n`;
+                const exs = [];
+                if (includeEx1) exs.push(`[${ex1Title||'Example 1'}]`);
+                if (includeEx2) exs.push(`[${ex2Title||'Example 2'}]`);
+                if (includeEx3) exs.push(`[${ex3Title||'Example 3'}]`);
+                p += `EXAMPLES: ${exs.join(', ') || 'n/a'}\n`;
+                p += `SAFETY: ${safety||'n/a'} PRIVACY: ${privacy||'n/a'} CRITIQUE: ${critique||'n/a'}\n`;
+                p += `RESPONSE: lang=${respLanguage||'n/a'} voice=${respVoice||'n/a'} schema=${respSchema||'n/a'}\n`;
+                document.getElementById('promptOutput').textContent = p;
+                updateCounts(p);
+                return;
+            }
+            let p = `# 🧠 UNIVERSAL AI DESIGN PROMPT\n\n`;
+            p += `## 1️⃣ ROLE & CONTEXT\n`;
+            p += `**Role:** Act as a ${role} with deep expertise in conversion and visual hierarchy.\n`;
+            p += `**Project:** ${type}\n`;
+            p += `**Goal:** ${goal}\n`;
+            p += `**Audience:** ${audience}\n`;
+            if (decision) p += `**Key User Decision:** "${decision}"\n`;
+            if (aiTool && aiTool !== '[AI Tool]') p += `**AI Tool:** ${aiTool}\n`;
+            if (valueProp) p += `**Value Prop:** ${valueProp}\n`;
+            p += `\n---\n\n`;
+            if (aiTool && aiTool !== '[AI Tool]') {
+                p += `## 🎯 AI TOOL SPECIFIC INSTRUCTIONS (${aiTool})\n`;
+                switch(aiTool) {
+                    case 'Figma':
+                        p += `**Figma Requirements:**\n- Use auto-layout and component variants\n- Include design tokens and color styles\n- Create responsive frames with constraints\n- Use Figma's design system features\n`;
+                        break;
+                    case 'Banana':
+                        p += `**Banana Development Requirements:**\n- Provide clean, production-ready code\n- Include proper component structure\n- Use modern web technologies\n- Ensure responsive design implementation\n`;
+                        break;
+                    case 'v0':
+                        p += `**v0 (Vercel) Requirements:**\n- Modern React/Next.js components\n- Tailwind CSS styling\n- TypeScript-friendly code\n- Vercel-optimized performance\n`;
+                        break;
+                    case 'Midjourney':
+                        p += `**Midjourney Image Generation:**\n- Focus on visual composition and style\n- Include specific artistic techniques\n- Define lighting and atmosphere\n- Specify aspect ratio and quality\n`;
+                        break;
+                    case 'DALL-E':
+                        p += `**DALL-E Image Generation:**\n- Detailed visual descriptions\n- Specific style references\n- Clear composition guidelines\n- Photorealistic or artistic style\n`;
+                        break;
+                    case 'Claude':
+                        p += `**Claude AI Requirements:**\n- Detailed technical specifications\n- Comprehensive design rationale\n- Accessibility considerations\n- Best practices documentation\n`;
+                        break;
+                    case 'ChatGPT':
+                        p += `**ChatGPT Requirements:**\n- Clear, structured prompts\n- Step-by-step implementation\n- Code examples and explanations\n- Troubleshooting considerations\n`;
+                        break;
+                    case 'Gemini':
+                        p += `**Gemini Requirements:**\n- Structured instructions\n- Encourage stepwise reasoning\n- Include safety and compliance notes\n- Provide multimodal asset references if applicable\n`;
+                        break;
+                    case 'Notion AI':
+                        p += `**Notion AI Requirements:**\n- Concise sections suitable for docs\n- Action lists and checklists\n- Minimal code blocks\n- Avoid heavy markdown decoration\n`;
+                        break;
+                    case 'GitHub Copilot':
+                        p += `**Copilot Requirements:**\n- Provide function/component signatures\n- Include clear inline TODOs\n- Specify tech stack and constraints\n- Emphasize test cases and edge conditions\n`;
+                        break;
+                    case 'Stable Diffusion':
+                        p += `**Stable Diffusion Requirements:**\n- Positive/negative prompts\n- Sampler and CFG guidance\n- Aspect ratio and seed suggestions\n- Style/model checkpoints\n`;
+                        break;
+                    case 'Runway':
+                        p += `**Runway Requirements:**\n- Shot list and timing\n- Motion and transitions\n- Asset references\n- Export specs\n`;
+                        break;
+                    default:
+                        p += `**General AI Tool Requirements:**\n- Provide detailed specifications\n- Include implementation guidelines\n- Ensure best practices\n- Consider scalability and maintenance\n`;
+                }
+                p += `\n---\n\n`;
+            }
+            p += `## 2️⃣ VISUAL DIRECTION (The Style Stack)\n`;
+            p += `**Visual Mood:** ${mood || 'Not specified'}\n`;
+            if (maturity) p += `- **Maturity:** ${maturity}\n`;
+            if (aesthetic) p += `- **Aesthetic:** ${aesthetic}\n`;
+            if (complexity) p += `- **Complexity:** ${complexity}\n`;
+            if (representation) p += `- **Representation:** ${representation}\n`;
+            if (formLanguage) p += `- **Form:** ${formLanguage}\n`;
+            if (gender) p += `- **Gender Association:** ${gender}\n`;
+            if (valuePerception) p += `- **Value Perception:** ${valuePerception}\n`;
+            if (emotionalTone) p += `- **Emotional Tone:** ${emotionalTone}\n`;
+            if (energyLevel) p += `- **Energy Level:** ${energyLevel}\n`;
+            p += `\n`;
+            if (techniques) {
+                p += `**Design Techniques & Effects:**\n- Use: ${techniques}\n\n`;
+            }
+            p += `**Color Palette:**\n- Primary: ${colorPrimary || '[Define Color]'}\n- Background: ${colorBg || '[Define Color]'}\n- Surface/Cards: ${colorSurface || '[Define Color]'}\n\n---\n\n`;
+            p += `## 3️⃣ LAYOUT & STRUCTURE\n`;
+            p += `**Frame:** ${frame}\n`;
+            if (navStyle) p += `- Navigation: ${navStyle}\n`;
+            if (heroLayout) p += `- Hero Layout: ${heroLayout}\n`;
+            if (sections) {
+                p += `\n**Key Sections to Include:**\n`;
+                sections.split(',').forEach(s => { if (s.trim()) p += `- ${s.trim()}\n`; });
+            }
+            p += `\n---\n\n`;
+            p += `## 4️⃣ COMPONENT DETAILS\n`;
+            p += `**Typography:** ${typography || 'Clean modern sans-serif (e.g. Inter)'}\n`;
+            if (btnStyle) p += `**Buttons:** ${btnStyle}\n`;
+            if (cardStyle) p += `**Cards:** ${cardStyle}\n`;
+            if (inputStyle) p += `**Input Fields:** ${inputStyle}\n`;
+            if (interactions) p += `**Interactive States:** ${interactions}\n`;
+            if (containerWidth) p += `**Container Width:** ${containerWidth}\n`;
+            if (gridSystem) p += `**Grid System:** ${gridSystem}\n`;
+            if (borderRadius) p += `**Border Radius:** ${borderRadius}\n`;
+            p += `\n---\n\n`;
+            p += `## 6️⃣ TECHNICAL IMPLEMENTATION\n`;
+            if (handoffFormat) p += `**Handoff Format:** ${handoffFormat}\n`;
+            if (componentDocs) p += `**Component Docs:** ${componentDocs}\n`;
+            if (performance) p += `**Performance:** ${performance}\n`;
+            if (testing) p += `**Testing:** ${testing}\n`;
+            if (animationStyle) p += `**Animation Style:** ${animationStyle}\n`;
+            if (transitionDuration) p += `**Transition Duration:** ${transitionDuration}\n`;
+            p += `\n---\n\n`;
+            p += `## 7️⃣ UX STRATEGY\n`;
+            if (uxStrategy) p += `**Principles:** ${uxStrategy}\n`;
+            if (accessFeatures) p += `**Accessibility:** ${accessFeatures}\n`;
+            if (responsive) p += `**Responsive:** ${responsive}\n`;
+            if (outputFormat) p += `**Output Format:** ${outputFormat}\n`;
+            p += `**Content Hierarchy:**\n- Focus on outcomes over features\n- Ensure high contrast for readability (WCAG AA)\n- Mobile-first responsiveness\n`;
+            p += `\n---\n\n`;
+            p += `## 9️⃣ CAMPAIGN BRIEF\n`;
+            if (campaignObjective) p += `**Objective:** ${campaignObjective}\n`;
+            if (campaignKPI) p += `**KPI:** ${campaignKPI}\n`;
+            if (campaignBudget) p += `**Budget:** ${campaignBudget}\n`;
+            if (campaignTimeline) p += `**Timeline:** ${campaignTimeline}\n`;
+            if (campaignChannels) p += `**Channels:** ${campaignChannels}\n`;
+            if (campaignAudienceSegments) p += `**Audience Segments:** ${campaignAudienceSegments}\n`;
+            if (campaignGeoLanguage) p += `**Geo/Language:** ${campaignGeoLanguage}\n`;
+            if (campaignCompliance) p += `**Compliance:** ${campaignCompliance}\n`;
+            p += `\n---\n\n`;
+            p += `## 🔟 CREATIVE REQUIREMENTS\n`;
+            if (creativeAssets) p += `**Assets:** ${creativeAssets}\n`;
+            if (creativeCopyTone) p += `**Copy Tone:** ${creativeCopyTone}\n`;
+            if (creativeBrandElements) p += `**Brand Elements:** ${creativeBrandElements}\n`;
+            if (creativeLegal) p += `**Legal/Disclaimers:** ${creativeLegal}\n`;
+            p += `\n---\n\n`;
+            p += `## 1️⃣1 TESTING PLAN\n`;
+            if (testingHypotheses) p += `**Hypotheses:** ${testingHypotheses}\n`;
+            if (testingVariants) p += `**Variants:** ${testingVariants}\n`;
+            if (testingMetrics) p += `**Metrics:** ${testingMetrics}\n`;
+            if (testingRollout) p += `**Rollout:** ${testingRollout}\n`;
+            p += `\n---\n\n`;
+            p += `## 1️⃣2 TRACKING & HANDOFF\n`;
+            if (trackingUTMStructure) p += `**UTM Structure:** ${trackingUTMStructure}\n`;
+            if (trackingNamingConventions) p += `**Naming Conventions:** ${trackingNamingConventions}\n`;
+            if (trackingExperimentIDs) p += `**Experiment IDs:** ${trackingExperimentIDs}\n`;
+            if (trackingTargetEvents) p += `**Target Events:** ${trackingTargetEvents}\n`;
+            p += `\n---\n\n`;
+            p += `## 1️⃣3 PROMPT QUALITY CONTROLS\n`;
+            if (pqContext) p += `**Background Context:** ${pqContext}\n`;
+            if (pqIntent) p += `**User Intent:** ${pqIntent}\n`;
+            if (pqConstraints) p += `**Constraints & Rules:** ${pqConstraints}\n`;
+            if (pqNegatives) p += `**Avoid:** ${pqNegatives}\n`;
+            if (pqLength) p += `**Response Length:** ${pqLength}\n`;
+            if (pqStructure) p += `**Response Structure:** ${pqStructure}\n`;
+            p += `\n---\n\n`;
+            p += `## 1️⃣4 FEW-SHOT EXAMPLES\n`;
+            if (includeEx1 && (ex1Input || ex1Output)) {
+                p += `**${ex1Title||'Example 1'}**\n`;
+                if (ex1Input) p += `- Input:\n${ex1Input}\n`;
+                if (ex1Output) p += `- Ideal Output:\n${ex1Output}\n`;
+            }
+            if (includeEx2 && (ex2Input || ex2Output)) {
+                p += `\n**${ex2Title||'Example 2'}**\n`;
+                if (ex2Input) p += `- Input:\n${ex2Input}\n`;
+                if (ex2Output) p += `- Ideal Output:\n${ex2Output}\n`;
+            }
+            if (includeEx3 && (ex3Input || ex3Output)) {
+                p += `\n**${ex3Title||'Example 3'}**\n`;
+                if (ex3Input) p += `- Input:\n${ex3Input}\n`;
+                if (ex3Output) p += `- Ideal Output:\n${ex3Output}\n`;
+            }
+            p += `\n---\n\n`;
+            p += `## 1️⃣5 CITATIONS, SAFETY & CRITIQUE\n`;
+            if (safety) p += `**Fact-check & Citations:** ${safety}\n`;
+            if (privacy) p += `**Safety & Privacy:** ${privacy}\n`;
+            if (critique) p += `**Critique & Revise:** ${critique}\n`;
+            p += `\n---\n\n`;
+            p += `## 1️⃣6 RESPONSE SCHEMA & LANGUAGE\n`;
+            if (respLanguage) p += `**Language:** ${respLanguage}\n`;
+            if (respVoice) p += `**Voice & Tone:** ${respVoice}\n`;
+            if (respSchema) p += `**Output Schema:** ${respSchema}\n`;
+            p += `\n---\n\n`;
+            p += `## 8️⃣ FINAL OUTPUT\n`;
+            p += `Please provide a comprehensive ${aiTool && aiTool !== '[AI Tool]' ? aiTool : 'AI tool'}-optimized solution for the ${type} based on the specifications above.`;
+            document.getElementById('promptOutput').textContent = p;
+            updateCounts(p);
+        }
+        function loadPreset(type) {
+            resetForm();
+            if (type === 'saas') {
+                document.getElementById('role').value = 'Senior Product Designer';
+                document.getElementById('type').value = 'SaaS Landing Page';
+                document.getElementById('goal').value = 'Drive free trial signups';
+                document.getElementById('audience').value = 'Small Business Owners';
+                document.getElementById('mood').value = 'Clean, Trustworthy, Efficient';
+                document.getElementById('maturity').value = 'Mature - Professional, established';
+                document.getElementById('aesthetic').value = 'Modern - Contemporary';
+                document.getElementById('complexity').value = 'Simple - Clean, straightforward';
+                document.getElementById('frame').value = 'Desktop (1440px)';
+                document.getElementById('heroLayout').value = 'Split Screen (Text Left, Image Right)';
+                document.getElementById('colorPrimary').value = '#2563EB';
+                document.getElementById('colorBg').value = '#FFFFFF';
+                document.getElementById('btnStyle').value = 'Solid blue, rounded corners (4px)';
+            } else if (type === 'fintech') {
+                document.getElementById('role').value = 'Visual Designer';
+                document.getElementById('type').value = 'Crypto Trading Dashboard';
+                document.getElementById('goal').value = 'Show real-time data with premium feel';
+                document.getElementById('audience').value = 'Pro Traders';
+                document.getElementById('mood').value = 'Dark, Neon, High-Tech';
+                document.getElementById('aesthetic').value = 'Futuristic - Forward-looking';
+                document.getElementById('complexity').value = 'Sophisticated - Layered, nuanced';
+                document.getElementById('colorBg').value = '#0B0F19';
+                document.getElementById('colorPrimary').value = '#8B5CF6';
+                document.getElementById('cardStyle').value = 'Glassmorphism, thin border, dark blur';
+                const checks = ['Dark Mode', 'Glassmorphism', 'Glow/Bloom', 'Gradients'];
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => { if (checks.includes(cb.value)) cb.checked = true; });
+            } else if (type === 'portfolio') {
+                document.getElementById('role').value = 'Creative Director';
+                document.getElementById('type').value = 'Design Portfolio';
+                document.getElementById('mood').value = 'Minimal, Bold, Artistic';
+                document.getElementById('aesthetic').value = 'Minimalist - Ultra-clean';
+                document.getElementById('complexity').value = 'Simple - Clean, straightforward';
+                document.getElementById('representation').value = 'Abstract - Conceptual, metaphorical';
+                document.getElementById('colorBg').value = '#F3F4F6';
+                document.getElementById('colorPrimary').value = '#111827';
+                document.getElementById('heroLayout').value = 'Centered Content';
+                const checks = ['Swiss Style', 'Flat Design'];
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => { if (checks.includes(cb.value)) cb.checked = true; });
+            }
+            updatePrompt();
+        }
+        function resetForm() {
+            document.getElementById('promptForm').reset();
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updatePrompt();
+        }
+        function savePreset(){
+            const name = prompt('Preset name:');
+            if (!name) return;
+            saveState(`preset:${name}`);
+            const list = JSON.parse(localStorage.getItem('udpg:presets')||'[]');
+            if (!list.includes(name)) {
+                list.push(name);
+                localStorage.setItem('udpg:presets', JSON.stringify(list));
+            }
+        }
+        function loadPresetPrompt(){
+            const list = JSON.parse(localStorage.getItem('udpg:presets')||'[]');
+            if (!list.length) return;
+            const name = prompt(`Load which preset?\n${list.join(', ')}`);
+            if (!name) return;
+            loadState(`preset:${name}`);
+        }
+        function deletePresetPrompt(){
+            const list = JSON.parse(localStorage.getItem('udpg:presets')||'[]');
+            if (!list.length) return;
+            const name = prompt(`Delete which preset?\n${list.join(', ')}`);
+            if (!name) return;
+            localStorage.removeItem(`udpg:preset:${name}`);
+            const next = list.filter(n => n !== name);
+            localStorage.setItem('udpg:presets', JSON.stringify(next));
+        }
+        function toggleTheme(){
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try { localStorage.setItem('udpg:theme', next); } catch {}
+            updatePrompt();
+        }
+        document.getElementById('importFile')?.addEventListener('change', (e)=>{
+            const file = e.target.files?.[0]; if (!file) return; importConfigFile(file);
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('udpg:theme') || 'dark');
+            initAccordions();
+            parseShareLink();
+            loadState('autosave');
+            updatePrompt();
+        });
+    </script>
+</body>
+
+</html>
