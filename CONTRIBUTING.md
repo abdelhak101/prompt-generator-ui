@@ -4,7 +4,7 @@ Thank you for your interest in contributing to Prompt Generator UI. This project
 
 ## Workspace
 
-- Open: [prompt-generator.html](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html) in a modern browser (Edge/Chrome/Firefox/Safari).
+- Open: [prompt-generator.html](/prompt-generator.html) in a modern browser (Edge/Chrome/Firefox/Safari).
 - No build or server required; all state is stored locally in your browser.
 - Test both Dark and Light themes and verify Copy/Download/Export/Import functions.
 
@@ -17,7 +17,7 @@ Thank you for your interest in contributing to Prompt Generator UI. This project
 
 ## Design & UX Guidelines
 
-- Follow the checklists in [README](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/README.md) (visual hierarchy, cognitive load, readability, consistency, accessibility, responsiveness).
+- Follow the checklists in [README](/README.md) (visual hierarchy, cognitive load, readability, consistency, accessibility, responsiveness).
 - Ensure WCAG 2.1 AA contrast and keyboard focus states remain intact.
 - Keep interactions subtle; avoid distracting motion unless explicitly configured.
 
@@ -32,7 +32,7 @@ Thank you for your interest in contributing to Prompt Generator UI. This project
 
 - Avoid introducing vulnerabilities per OWASP Top 10 (e.g., XSS via unescaped user content).
 - Validate/sanitize any content that could be rendered; prefer textContent over innerHTML.
-- See [SECURITY.md](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/SECURITY.md) for reporting.
+- See [SECURITY.md](/SECURITY.md) for reporting.
 
 ## Commit Messages
 
@@ -59,8 +59,8 @@ Thank you for your interest in contributing to Prompt Generator UI. This project
 
 ## Code of Conduct
 
-- Be respectful and constructive. See [CODE_OF_CONDUCT.md](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/CODE_OF_CONDUCT.md).
+- Be respectful and constructive. See [CODE_OF_CONDUCT.md](/CODE_OF_CONDUCT.md).
 
 ## License
 
-- By contributing, you agree your contributions are licensed under the project’s [MIT License](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/LICENSE).
+- By contributing, you agree your contributions are licensed under the project’s [MIT License](/LICENSE).

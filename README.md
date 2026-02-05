@@ -2,7 +2,7 @@
 
 Universal Design Prompt Generator (Ultimate Edition) — a single-file, offline tool to think through UI/UX decisions and generate structured prompts for design tools and AI assistants.
 
-Open the app: [prompt-generator.html](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html)
+Open the app: [prompt-generator.html](/prompt-generator.html)
 
 ## Overview
 
@@ -34,7 +34,7 @@ No build, no server. State is saved locally in your browser.
 - Output character and token estimates
 - Import/Export JSON config
 
-Key functions: [updatePrompt](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html#L1755-L2083), [applyState](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html#L1646-L1671), [exportConfig](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html#L1685-L1691), [copyShareLink](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html#L1703-L1713), [toggleTheme](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html#L2159-L2166).
+Key functions: [updatePrompt](/prompt-generator.html#L1755-L2083), [applyState](/prompt-generator.html#L1646-L1671), [exportConfig](/prompt-generator.html#L1685-L1691), [copyShareLink](/prompt-generator.html#L1703-L1713), [toggleTheme](/prompt-generator.html#L2159-L2166).
 
 ## Usage
 
@@ -143,8 +143,8 @@ Key functions: [updatePrompt](file:///d:/10-26-2024/Projects/Personal/prompt-gen
 
 ## File Structure
 
-- Single file app: [prompt-generator.html](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/prompt-generator.html)
-- License: [LICENSE](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/LICENSE)
+- Single file app: [prompt-generator.html](/prompt-generator.html)
+- License: [LICENSE](/LICENSE)
 
 ## Roadmap Ideas
 
@@ -155,4 +155,4 @@ Key functions: [updatePrompt](file:///d:/10-26-2024/Projects/Personal/prompt-gen
 
 ## License
 
-See [LICENSE](file:///d:/10-26-2024/Projects/Personal/prompt-generator-ui/LICENSE).
+See [LICENSE](/LICENSE).
